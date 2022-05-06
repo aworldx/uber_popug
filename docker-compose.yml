@@ -1,0 +1,60 @@
+version: '3'
+
+volumes:
+  db-popug-data:
+    driver: local
+    
+services:
+  rabbitmq:
+    image: 'rabbitmq:3.6-management-alpine'
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    networks:
+      - network
+
+  db:
+    image: postgres
+    container_name: psql
+    volumes:
+      - db-popug-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+    networks:
+      - network
+
+  oauth:
+    container_name: oauth
+    build: ./auth/.
+    command: ['rails', 'server', '-p', '3000', '-b', '0.0.0.0']
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - rabbitmq
+    environment:
+      RAILS_ENV: 'development'
+      DATABASE_URL: 'postgres://postgres:password@db:5432/postgres'
+      KAFKA_URL: 'kafka://172.20.0.20:9092'
+      BROKER_ADAPTER: 'rabbitmq'
+      AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+    networks:
+      - network
+        
+  task_manager:
+    container_name: task_manager
+    build: ./task_manager/.
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - ./task_manager:/task_manager
+    ports:
+      - "4000:3000"
+    depends_on:
+      - db
+    environment:
+      RAILS_ENV: 'development'
+    networks:
+      - network
+  
+networks:
+  network: {}

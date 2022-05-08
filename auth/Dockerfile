@@ -12,7 +12,6 @@ RUN bundle config --global frozen 1
 
 RUN mkdir /oauth
 WORKDIR /oauth
-ADD . /oauth
 
 ADD Gemfile /oauth/Gemfile
 ADD Gemfile.lock /oauth/Gemfile.lock
@@ -21,6 +20,8 @@ RUN bundle install
 ADD package.json /oauth/package.json
 ADD yarn.lock /oauth/yarn.lock
 RUN yarn install
+
+ADD . /oauth
 
 EXPOSE 3000
 

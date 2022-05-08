@@ -16,9 +16,12 @@ services:
   db:
     image: postgres
     container_name: psql
+    ports:
+      - "5432:5432"
     volumes:
       - db-popug-data:/var/lib/postgresql/data
     environment:
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     networks:
       - network
@@ -53,6 +56,8 @@ services:
       - db
     environment:
       RAILS_ENV: 'development'
+      APP_KEY: 'L3F8uk5R47cZRlf4i6gZDjLNEExyq4COliWUA-sQIDY'
+      APP_SECRET: 'RyN32berCmpte5lhMT_fY7jBEHzjzGXwHEojLbqmqEA'
     networks:
       - network
   

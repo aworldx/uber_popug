@@ -7,6 +7,10 @@ Doorkeeper.configure do
 
   # This block will be called to check whether the resource owner is authenticated or not.
   resource_owner_authenticator do
+    logger.info 'doorkeeper'
+    logger.info session['warden.user.account.key']&.first
+    logger.info Account.find_by(id: session['warden.user.account.key']&.first)
+
     Account.find_by(id: session['warden.user.account.key']&.first) || redirect_to(new_account_session_path)
   end
 

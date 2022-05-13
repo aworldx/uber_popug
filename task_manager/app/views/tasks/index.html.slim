@@ -3,11 +3,21 @@ table
   thead
     tr
       th task
-      th email
+      th worker email
+      th worker name
+      th worker id
+      th action
   tbody
     - @tasks.each do |task|
       tr
         td = task.description
         td = task.account.email
+        td = task.account.full_name
+        td = task.account.id
+        - if policy(task).complete?
+          td = link_to 'complete', complete_task_path(task), method: :put
 
-= link_to 'create', tasks_path, method: :post
+= link_to 'create', new_task_path
+
+- if policy(Task).reshuffle?
+  = link_to 'reshuffle', reshuffle_tasks_path, method: :post

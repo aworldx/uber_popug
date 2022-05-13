@@ -38,8 +38,6 @@ services:
     environment:
       RAILS_ENV: 'development'
       DATABASE_URL: 'postgres://postgres:password@db:5432/postgres'
-      KAFKA_URL: 'kafka://172.20.0.20:9092'
-      BROKER_ADAPTER: 'rabbitmq'
       AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
     networks:
       - network
@@ -58,8 +56,26 @@ services:
       RAILS_ENV: 'development'
       APP_KEY: 'L3F8uk5R47cZRlf4i6gZDjLNEExyq4COliWUA-sQIDY'
       APP_SECRET: 'RyN32berCmpte5lhMT_fY7jBEHzjzGXwHEojLbqmqEA'
+      AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
     networks:
       - network
+
+  task_manager_consumer:
+    container_name: task_manager_consumer
+    build: ./task_manager/.
+    command: ['bundle', 'exec', 'rails', 'sneakers:run']
+    volumes:
+      - ./task_manager:/task_manager
+    depends_on:
+      - db
+      - rabbitmq
+    environment:
+      RAILS_ENV: 'development'
+      APP_KEY: 'L3F8uk5R47cZRlf4i6gZDjLNEExyq4COliWUA-sQIDY'
+      APP_SECRET: 'RyN32berCmpte5lhMT_fY7jBEHzjzGXwHEojLbqmqEA'
+      AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+    networks:
+      - network    
   
 networks:
   network: {}

@@ -183,11 +183,9 @@
 - query: Task Prices (for time interval)
 
 ## Бизнес цепочки
-- Register user -> Create bank account
-- Create task -> Calculate task price -> Charge money from user account  
-- Reassign tasks -> Charge money from user bank account -> Create audit record
-- Complete task -> Deposit money to user bank account -> Create audit record
-- Pay day salary -> Create audit record -> Send email
+- Assign task -> Calculate task price + Charge money from user bank account  
+- Complete task -> Deposit money to user bank account
+- Pay day salary -> Send email
 
 ## Модель данных
 ![Image](./images/data_model.png)
@@ -207,26 +205,13 @@
 - сервис работы с задачами
 - сервис аккаунтинга (здесь же отправка писем и аналитика)
 
-Сервис для отображения данных, дашбордов пока не рассматриваю.
-Возможно взаимодействие с указанными сервисами будет происходить посредством JSON API.
-Если останется время, то сделаю отдельный сервис для фронта.
-
 ![Image](./images/services.png)
 
 ## Бизнес события
-- Users.Registered
-- Tasks.Created
-- Tasks.Calculated
-- Tasks.Reassigned
-- Tasks.Completed
-- BankAccounts.Created
-- BankAccounts.Debited
-- BankAccounts.Refilled
-- BankAccounts.Paid
-- Notifications.send
-- AuditLogs.Created
+- TaskAssigned
+- TaskFinished
+- SalaryPaid
 
 ## CUD События
-- Users.Registered. Auth Service -> Task Service. Data: User.id, User.Role 
-- Users.Registered. Auth Service -> Accounting. Data: User.id, User.role, User.name, User.email
-- Tasks.Created. Task Service -> Accounting. Data: Task.id, Task.Description
+- AccountCreated, AccountUpdated, AccountDeleted
+- TaskCreated, TaskUpdated

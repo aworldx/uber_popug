@@ -8,8 +8,8 @@ module OmniAuth
       option :provider_ignores_state, true
 
       option :client_options, {
-        :site => 'http://localhost:3000',
-        :authorize_url => '/oauth/authorize'
+        site: 'http://oauth:3000',
+        authorize_url: '/oauth/authorize'
       }
 
       uid { raw_info['public_id'] }

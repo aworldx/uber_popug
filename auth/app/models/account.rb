@@ -20,28 +20,21 @@ class Account < ApplicationRecord
     manager: 'manager'
   }
 
-  after_create do
-    account = self
+  after_commit :produce_account_created, on: :create
 
-    # ----------------------------- produce event -----------------------
-    event = {
-      event_id: SecureRandom.uuid,
-      event_version: 1,
-      event_time: Time.now.to_s,
-      producer: 'auth_service',
-      event_name: 'AccountCreated',
-      data: {
+  private
+
+  def produce_account_created
+    event = Event.new(
+      {
         public_id: account.public_id,
         email: account.email,
         full_name: account.full_name,
-        position: account.position
-      }
-    }
-    # result = SchemaRegistry.validate_event(event, 'accounts.created', version: 1)
-
-    # if result.success?
+        position: account.position,
+        role: account.role
+      },
+      'AccountCreated'
+    )
     Producer.new.call(event, topic: 'accounts-stream')
-    # end
-    # --------------------------------------------------------------------
   end
 end

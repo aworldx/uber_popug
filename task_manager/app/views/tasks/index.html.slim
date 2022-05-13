@@ -1,0 +1,13 @@
+h1 Tasks
+table
+  thead
+    tr
+      th task
+      th email
+  tbody
+    - @tasks.each do |task|
+      tr
+        td = task.description
+        td = task.account.email
+
+= link_to 'create', tasks_path, method: :post

@@ -1,10 +1,16 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
-
-  private
+  include Pundit::Authorization
 
   def current_account
-    Account.find_by(public_id: session['account_public_id'])
+    # logger.info "find user by session account id #{session[:account_id]}"
+    account = Account.find_by(id: session[:account_id])
+    logger.info "find user by session account id #{session[:account_id]} = #{account}"
+    account
+  end
+
+  def current_user
+    current_account
   end
 
   def authenticate!
@@ -13,6 +19,6 @@ class ApplicationController < ActionController::Base
   end
 
   def authenticated?
-    !!current_account
+    current_account.present?
   end
 end

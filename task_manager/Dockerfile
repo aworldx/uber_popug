@@ -8,9 +8,8 @@ RUN curl https://deb.nodesource.com/setup_12.x | bash \
 RUN apt-get update -qq && apt-get install -y nodejs postgresql-client yarn
 
 WORKDIR /task_manager
-COPY Gemfile /task_manager/Gemfile
-COPY Gemfile.lock /task_manager/Gemfile.lock
-RUN bundle install
+COPY Gemfile Gemfile.lock ./
+RUN bundle config build.nokogiri --use-system-libraries && bundle install
 
 ADD package.json /task_manager/package.json
 ADD yarn.lock /task_manager/yarn.lock
@@ -21,7 +20,7 @@ COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
 
-ADD . /oauth
+ADD . /task_manager
 
 EXPOSE 3000
 
